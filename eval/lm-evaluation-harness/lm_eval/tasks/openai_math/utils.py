@@ -144,7 +144,11 @@ class ChatCompletionSampler:
         max_tokens: int = 1024,
     ):
         self.api_key_name = "OPENAI_API_KEY"
-        self.client = OpenAI()
+        if model=="deepseek-reasoner":
+            print("api key is", os.environ.get("OPENAI_API_KEY"))
+            self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
+        else:
+            self.client = OpenAI()
         # using api_key=os.environ.get("OPENAI_API_KEY")  # please set your API_KEY
         self.model = model
         self.system_message = system_message
@@ -254,9 +258,11 @@ def process_results(doc: dict, results: List[str]) -> Dict[str, int]:
 
     if os.getenv("PROCESSOR", "") == "gpt-4o-mini":
         sampler = ChatCompletionSampler(model="gpt-4o-mini")
+    elif os.getenv("PROCESSOR", "") == "deepseek-reasoner":
+        sampler = ChatCompletionSampler(model="deepseek-reasoner")
     else:
         print(f"Unknown processor: {os.getenv('PROCESSOR')}; set 'PROCESSOR=gpt-4o-mini' and 'OPENAI_API_KEY=YOUR_KEY' for best results.")
-        raise ValueError(f"MATH requires PROCESSOR atm. AIME is fine without it.")
+        #raise ValueError(f"MATH requires PROCESSOR atm. AIME is fine without it.")
         sampler = None
 
     if isinstance(doc["answer"], str) and doc["answer"].isdigit():

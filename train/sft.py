@@ -47,9 +47,22 @@ def train():
     if "Llama" in config.model_name:
         instruction_template = "<|start_header_id|>user<|end_header_id|>"
         response_template = "<|start_header_id|>assistant<|end_header_id|>\n\n"
+        #add thinking tag
+        tokenizer.add_tokens("<think>")
+        tokenizer.add_tokens("</think>")
         # Use a token that is never used
         tokenizer.pad_token = "<|reserved_special_token_5|>"
-    elif "Qwen" in config.model_name:
+    elif "Qwen" in config.model_name and "DeepSeek" not in config.model_name:
+        instruction_template = "<|im_start|>user"
+        response_template = "<|im_start|>assistant\n"
+        # Use a token that is never used
+        tokenizer.pad_token = "<|fim_pad|>"
+    elif "DeepSeek" in config.model_name:
+        instruction_template = "<｜User｜>"
+        response_template = "<｜Assistant｜><think>"
+        # Use a token that is never used
+        tokenizer.pad_token = "<|vision_pad|>"
+    else:
         instruction_template = "<|im_start|>user"
         response_template = "<|im_start|>assistant\n"
         # Use a token that is never used
