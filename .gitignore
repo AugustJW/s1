@@ -1,4 +1,5 @@
 ckpts/
-
+train/run/
+eval/output/
 wandb/
 
